@@ -1,0 +1,16 @@
+## https://communities.vmware.com/thread/501400
+# Disk DescriptorFile
+version=1
+encoding="windows-1252"
+CID=d541ba78
+parentCID=ffffffff
+isNativeSnapshot="no"
+createType="custom"
+# Extent description
+RW 268435456 VPCSPARSE "xpmode.vhd"
+# The Disk Data Base
+#DDB
+ddb.adapterType = "ide"
+ddb.geometry.cylinders = "16383"
+ddb.geometry.heads = "16"
+ddb.geometry.sectors = "63"
