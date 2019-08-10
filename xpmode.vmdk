@@ -7,6 +7,7 @@ parentCID=ffffffff
 isNativeSnapshot="no"
 createType="custom"
 ## https://www.microsoft.com/en-us/download/details.aspx?id=8002
+## https://download.microsoft.com/download/7/2/C/72C7BAB7-2F32-4530-878A-292C20E1845A/WindowsXPMode_en-us.exe
 # Extent description
 RW 268435456 VPCSPARSE "xpmode.vhd"
 # The Disk Data Base
