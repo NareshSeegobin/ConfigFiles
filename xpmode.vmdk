@@ -6,6 +6,7 @@ CID=d541ba78
 parentCID=ffffffff
 isNativeSnapshot="no"
 createType="custom"
+## https://www.microsoft.com/en-us/download/details.aspx?id=8002
 # Extent description
 RW 268435456 VPCSPARSE "xpmode.vhd"
 # The Disk Data Base
