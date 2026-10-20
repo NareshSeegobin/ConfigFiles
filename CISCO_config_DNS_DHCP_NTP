@@ -1,0 +1,142 @@
+!!! DNS
+
+!!! DNS-Google - Naresh Seegobin - www.nareshseegobin.com
+
+enable
+configure terminal
+hostname DNS-Google
+
+
+interface FastEthernet0/0
+ip address 8.8.8.8 255.255.255.0
+shutdown
+no shutdown
+
+
+exit
+exit
+
+configure terminal
+!! NOTES: Setup your routes accordingly!
+ip default-gateway 8.8.8.1
+ip route 0.0.0.0 0.0.0.0 8.8.8.1
+
+ip dns server
+ip domain-lookup
+!! NOTES: not required, but still add just in case.
+ip dns primary info3605.org soa dns1.info3605.org mailbox.info3605.org 21600 900 7776000 86400
+
+!! NOTES: create your list and execute commands from your list. Excel (yes, Excel) can construct your CISCO commands.
+ip host dns.google 8.8.8.8
+ip host www.google.com 172.217.2.132
+ip host www.mozilla.org 104.16.41.2
+ip host sta.uwi.edu 64.28.139.231
+ip host www.sta.uwi.edu 64.28.139.231
+ip host my.uwi.edu 64.28.139.240
+ip host www.my.uwi.edu 64.28.139.240
+
+end
+
+
+copy running-config startup-config
+
+
+
+
+
+
+
+
+
+
+
+!!! NTP
+
+
+enable
+configure terminal
+
+interface Loopback123
+ ip address 123.123.123.123 255.255.255.0
+ description Loopback for NTP server; set your routing accordingly. - NS
+end
+
+
+configure terminal
+clock timezone AST -4 0
+clock save interval 8
+ntp source Loopback123
+ntp master
+ntp server 2.north-america.pool.ntp.org
+
+!! NOTE: Ensure eBGP will advertise this Loopback address 123.123.123.123 255.255.255.0
+!!       Each router must be able to ping 123.123.123.123
+
+!! Setup each interface to allow NTP broadcast from the NTP server.
+interface FastEthernet X/X/X
+ ntp broadcast version 3
+
+interface Vlan XXX
+ ntp broadcast version 3
+
+
+
+
+
+!! DHCP
+
+ip dhcp excluded-address 192.168.0.1 192.168.0.100
+
+ip dhcp pool Server01-DHCP-192.168.0.0
+ network 192.168.0.0 255.255.255.0
+ default-router 192.168.0.1
+ dns-server 8.8.8.8
+!! Time server info
+ option 4 123.123.123.123
+ option 42 123.123.123.123
+
+
+ip dhcp excluded-address 11.11.11.1 11.11.11.10
+
+ip dhcp pool Server01-DHCP-11.11.11.0
+ network 11.11.11.0 255.255.255.0
+ default-router 11.11.11.1
+ dns-server 8.8.8.8
+!! Time server info
+ option 4 123.123.123.123
+ option 42 123.123.123.123
+
+!!! https://www.cisco.com/c/en/us/td/docs/net_mgmt/prime/network_registrar/8-1/user/guide/CPNR_8_1_User_Guide/UGB_Opts.pdf
+
+
+
+
+
+
+
+
+!! NAT/PAT - BONUS :)
+
+
+
+!!! https://www.firewall.cx/cisco-technical-knowledgebase/cisco-routers/260-cisco-router-nat-overload.html
+access-list 100 remark == [Control NAT Service]==
+access-list 100 permit ip 192.168.0.0 0.0.0.255 any
+
+ip nat inside source list 100 interface FastEthernet0/0 overload
+
+
+interface FastEthernet0/0
+description ip address dhcp - To ISP1 via FastEthernet0/0 DHCP - NS
+ip address dhcp
+ip nat outside
+shutdown
+no shutdown
+
+
+interface FastEthernet1/0
+description ip address 192.168.0.1 255.255.255.0 - To local network - NS
+ip address 192.168.0.1 255.255.255.0
+ip nat inside
+shutdown
+no shutdown
